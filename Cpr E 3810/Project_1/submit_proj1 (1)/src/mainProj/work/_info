@@ -1,0 +1,93 @@
+m255
+K4
+z2
+!s11e vcom 2023.2_2 2023.06, Jun  9 2023
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj
+Eequals
+Z1 w1697646621
+Z2 DPx3 std 6 textio 0 22 LS[?81n5ZHWBI9JkBZTV<2
+Z3 DPx4 ieee 14 std_logic_1164 0 22 6<US`=mgl_dFdCEFF7J=m1
+!i122 1
+R0
+Z4 8/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/equals.vhd
+Z5 F/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/equals.vhd
+l0
+L4 1
+VlnLJRAo^KDenJ1aI[:zfR3
+!s100 Al[DIIQDI7H;<ok`QQh3M0
+Z6 OL;C;2023.2_2;77
+32
+Z7 !s110 1697646628
+!i10b 1
+Z8 !s108 1697646628.000000
+Z9 !s90 -reportprogress|300|-work|work|/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/equals.vhd|
+!s107 /home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/equals.vhd|
+!i113 0
+Z10 o-work work
+Z11 tExplicit 1 CvgOpt 0
+Adataflow
+R2
+R3
+DEx4 work 6 equals 0 22 lnLJRAo^KDenJ1aI[:zfR3
+!i122 1
+l13
+L12 13
+V]38oh1GhnIU8PIk[;l=L^0
+!s100 bWfglHL^4KFR35kEU:QL_1
+R6
+32
+R7
+!i10b 1
+R8
+R9
+Z12 !s107 /home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/equals.vhd|
+!i113 0
+R10
+R11
+Eslt
+Z13 w1697646145
+R2
+R3
+!i122 0
+R0
+Z14 8/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/slt.vhd
+Z15 F/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/slt.vhd
+l0
+L4 1
+VTh:7h7cEl0dUIU?n2fG913
+!s100 UE7N3j;^^Qh9B>U2o66Tl3
+R6
+32
+Z16 !s110 1697646494
+!i10b 1
+Z17 !s108 1697646494.000000
+Z18 !s90 -reportprogress|300|-work|work|/home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/slt.vhd|
+Z19 !s107 /home/cmesman/cpre381/Project1/Project1/cpre381-toolflow/proj/src/mainProj/slt.vhd|
+!i113 0
+R10
+R11
+Adataflow
+R2
+R3
+DEx4 work 3 slt 0 22 Th:7h7cEl0dUIU?n2fG913
+!i122 0
+l13
+L12 14
+V?0khB_]CcBWN6DXjb[TY^3
+!s100 KK44X=^NC?4<?:8Q[MU[03
+R6
+32
+R16
+!i10b 1
+R17
+R18
+R19
+!i113 0
+R10
+R11
