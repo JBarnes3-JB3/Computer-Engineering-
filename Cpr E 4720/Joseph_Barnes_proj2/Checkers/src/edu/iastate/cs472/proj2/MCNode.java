@@ -1,0 +1,45 @@
+package edu.iastate.cs472.proj2;
+
+/**
+ * Node type for the Monte Carlo search tree.
+ @Joseph
+ */
+import java.util.ArrayList;
+
+public class MCNode<E>
+{
+	E state;  // The game state
+    MCNode<E> parent;
+    ArrayList<MCNode<E>> children;
+    CheckersMove move;  
+    
+    int visits;
+    double wins;  
+    
+    public MCNode(E state, MCNode<E> parent, CheckersMove move) {
+        this.state = state;
+        this.parent = parent;
+        this.move = move;
+        this.children = new ArrayList<>();
+        this.visits = 0;
+        this.wins = 0.0;
+    }
+    
+    public boolean isFullyExpanded(CheckersMove[] legalMoves) {
+        return children.size() == (legalMoves != null ? legalMoves.length : 0);
+    }
+    
+    public boolean isLeaf() {
+        return children.isEmpty();
+    }
+    
+    public double getUCB(double explorationConstant) {
+        if (visits == 0) {
+            return Double.POSITIVE_INFINITY;
+        }
+        if (parent == null || parent.visits == 0) {
+            return Double.POSITIVE_INFINITY;
+        }
+        return (wins / visits) + explorationConstant * Math.sqrt(Math.log(parent.visits) / visits);
+    }
+}

@@ -1,0 +1,40 @@
+-- JumpAddress.vhd
+-------------------------------------------------------------------------
+-- DESCRIPTION: This file contains the ALU control s_typeion.
+--
+--
+-- NOTES:
+-- 10/02/2023 by Sabrina Francis::Design created.
+-------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+
+entity JumpAddress is
+  port(inst         : in std_logic_Vector(25 downto 0);
+       PC           : in std_logic_Vector(31 downto 0);
+       jumpAddress  : out std_logic_Vector(31 downto 0));   
+
+end JumpAddress;
+
+architecture structural of JumpAddress is
+
+component fullAdder_N is
+  generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
+  port(i_A1              : in std_logic_vector(N-1 downto 0);
+       i_B1              : in std_logic_vector(N-1 downto 0);
+       i_C1              : in std_logic;
+       s_O               : in std_logic;
+       o_S1              : out std_logic_vector(N-1 downto 0);
+       o_C1              : out std_logic;
+       overflow          : out std_logic);
+end component;
+
+
+
+begin
+
+jumpAddress <= PC(31 downto 28) & inst & "00";
+
+ 
+end structural;

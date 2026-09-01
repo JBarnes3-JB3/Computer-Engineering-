@@ -1,0 +1,178 @@
+package edu.iastate.cs472.proj2;
+
+/**
+ * 
+ * @author 
+ *
+ */
+
+
+/**
+ * This class implements the Alpha-Beta pruning algorithm to find the best 
+ * move at current state.
+*/
+public class AlphaBetaSearch extends AdversarialSearch {
+
+    /**
+     * The input parameter legalMoves contains all the possible moves.
+     * It contains four integers:  fromRow, fromCol, toRow, toCol
+     * which represents a move from (fromRow, fromCol) to (toRow, toCol).
+     * It also provides a utility method `isJump` to see whether this
+     * move is a jump or a simple move.
+     * 
+     * Each legalMove in the input now contains a single move
+     * or a sequence of jumps: (rows[0], cols[0]) -> (rows[1], cols[1]) ->
+     * (rows[2], cols[2]).
+     *
+     * @param legalMoves All the legal moves for the agent at current step.
+     */
+	private static final int MAX_DEPTH = 8;
+	
+    public CheckersMove makeMove(CheckersMove[] legalMoves) {
+        // The checker board state can be obtained from this.board,
+        // which is a int 2D array. The numbers in the `board` are
+        // defined as
+        // 0 - empty square,
+        // 1 - red man
+        // 2 - red king
+        // 3 - black man
+        // 4 - black king
+        System.out.println(board);
+        System.out.println();
+
+        if (legalMoves == null || legalMoves.length == 0) {
+            return null;
+        }
+        
+        CheckersMove bestMove = legalMoves[0];
+        double bestValue = Double.NEGATIVE_INFINITY;
+        
+        for (CheckersMove move : legalMoves) {
+            // Make move on a copy
+            CheckersData tempBoard = copyBoard(board);
+            tempBoard.makeMove(move);
+            
+            // Evaluate using minimax with alpha-beta pruning
+            double value = minValue(tempBoard, MAX_DEPTH - 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+            
+            if (value > bestValue) {
+                bestValue = value;
+                bestMove = move;
+            }
+        }
+        
+        return bestMove;
+        
+        // Return the move for the current state.
+        // Here, we simply return the first legal move for demonstration.
+    }
+    
+    private double maxValue(CheckersData state, int depth, double alpha, double beta) {
+        if (depth == 0 || isTerminal(state)) {
+            return evaluate(state);
+        }
+        
+        double value = Double.NEGATIVE_INFINITY;
+        CheckersMove[] moves = state.getLegalMoves(CheckersData.BLACK);
+        
+        if (moves == null) {
+            return evaluate(state);
+        }
+        
+        for (CheckersMove move : moves) {
+            CheckersData newState = copyBoard(state);
+            newState.makeMove(move);
+            value = Math.max(value, minValue(newState, depth - 1, alpha, beta));
+            
+            if (value >= beta) {
+                return value; // Beta cutoff
+            }
+            alpha = Math.max(alpha, value);
+        }
+        
+        return value;
+    }
+    
+    private double minValue(CheckersData state, int depth, double alpha, double beta) {
+        if (depth == 0 || isTerminal(state)) {
+            return evaluate(state);
+        }
+        
+        double value = Double.POSITIVE_INFINITY;
+        CheckersMove[] moves = state.getLegalMoves(CheckersData.RED);
+        
+        if (moves == null) {
+            return evaluate(state);
+        }
+        
+        for (CheckersMove move : moves) {
+            CheckersData newState = copyBoard(state);
+            newState.makeMove(move);
+            value = Math.min(value, maxValue(newState, depth - 1, alpha, beta));
+            
+            if (value <= alpha) {
+                return value; // Alpha cutoff
+            }
+            beta = Math.min(beta, value);
+        }
+        
+        return value;
+    }
+    
+    private boolean isTerminal(CheckersData state) {
+        return state.getLegalMoves(CheckersData.BLACK) == null || 
+               state.getLegalMoves(CheckersData.RED) == null;
+    }
+    
+    private double evaluate(CheckersData state) {
+        // Terminal state check
+        CheckersMove[] blackMoves = state.getLegalMoves(CheckersData.BLACK);
+        CheckersMove[] redMoves = state.getLegalMoves(CheckersData.RED);
+        
+        if (blackMoves == null) {
+            return -1.0; // Black (agent) loses
+        }
+        if (redMoves == null) {
+            return 1.0; // Black (agent) wins
+        }
+        
+        // Heuristic evaluation for non-terminal states
+        double score = 0.0;
+        
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                int piece = state.pieceAt(row, col);
+                
+                if (piece == CheckersData.BLACK) {
+                    score += 1.0;
+                    score += row * 0.1; // Reward advancement
+                } else if (piece == CheckersData.BLACK_KING) {
+                    score += 1.5;
+                } else if (piece == CheckersData.RED) {
+                    score -= 1.0;
+                    score -= (7 - row) * 0.1; // Penalize opponent advancement
+                } else if (piece == CheckersData.RED_KING) {
+                    score -= 1.5;
+                }
+            }
+        }
+        
+        // Add mobility score
+        score += (blackMoves != null ? blackMoves.length : 0) * 0.05;
+        score -= (redMoves != null ? redMoves.length : 0) * 0.05;
+        
+        return score;
+    }
+    
+    private CheckersData copyBoard(CheckersData board) {
+        CheckersData newBoard = new CheckersData();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                newBoard.board[i][j] = board.board[i][j];
+            }
+        }
+        return newBoard;
+    }
+
+}
+

@@ -1,0 +1,179 @@
+package edu.iastate.cs472.proj2;
+
+/**
+ * 
+ * @author 
+ *
+ */
+
+/**
+ * This class implements the Monte Carlo tree search method to find the best
+ * move at the current state.
+ */
+public class MonteCarloTreeSearch extends AdversarialSearch {
+
+	/**
+     * The input parameter legalMoves contains all the possible moves.
+     * It contains four integers:  fromRow, fromCol, toRow, toCol
+     * which represents a move from (fromRow, fromCol) to (toRow, toCol).
+     * It also provides a utility method `isJump` to see whether this
+     * move is a jump or a simple move.
+     *
+     * Each legalMove in the input now contains a single move
+     * or a sequence of jumps: (rows[0], cols[0]) -> (rows[1], cols[1]) ->
+     * (rows[2], cols[2]).
+     *
+     * @param legalMoves All the legal moves for the agent at current step.
+     */
+	 private static final int NUM_ITERATIONS = 1000; // Adjust based on time constraints
+	 private static final double EXPLORATION_CONSTANT = Math.sqrt(2);
+	 
+    public CheckersMove makeMove(CheckersMove[] legalMoves) {
+        // The checker board state can be obtained from this.board,
+        // which is an 2D array of the following integers defined below:
+    	// 
+        // 0 - empty square,
+        // 1 - red man
+        // 2 - red king
+        // 3 - black man
+        // 4 - black king
+        System.out.println(board);
+        System.out.println();
+
+        if (legalMoves == null || legalMoves.length == 0) {
+            return null;
+        }
+        
+        MCNode<CheckersData> root = new MCNode<>(copyBoard(board), null, null);
+        
+        for (int i = 0; i < NUM_ITERATIONS; i++) {
+            MCNode<CheckersData> node = selection(root);
+            MCNode<CheckersData> expandedNode = expansion(node);
+            double result = simulation(expandedNode.state);
+            backPropagation(expandedNode, result);
+        }
+        
+        // Choose best move based on visit count
+        MCNode<CheckersData> bestChild = null;
+        int maxVisits = -1;
+        
+        for (MCNode<CheckersData> child : root.children) {
+            if (child.visits > maxVisits) {
+                maxVisits = child.visits;
+                bestChild = child;
+            }
+        }
+        
+        return bestChild != null ? bestChild.move : legalMoves[0];
+    }
+    
+    private MCNode<CheckersData> selection(MCNode<CheckersData> root) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private MCNode<CheckersData> expansion(MCNode<CheckersData> node) {
+        CheckersMove[] blackMoves = node.state.getLegalMoves(CheckersData.BLACK);
+        CheckersMove[] redMoves = node.state.getLegalMoves(CheckersData.RED);
+        
+        // Check if terminal
+        if (blackMoves == null || redMoves == null) {
+            return node;
+        }
+        
+        // Determine whose turn it is (alternate between players)
+        int depth = 0;
+        MCNode<CheckersData> temp = node;
+        while (temp.parent != null) {
+            depth++;
+            temp = temp.parent;
+        }
+        
+        CheckersMove[] availableMoves = (depth % 2 == 0) ? blackMoves : redMoves;
+        
+        // Find unexpanded moves
+        for (CheckersMove move : availableMoves) {
+            boolean alreadyExpanded = false;
+            for (MCNode<CheckersData> child : node.children) {
+                if (movesEqual(child.move, move)) {
+                    alreadyExpanded = true;
+                    break;
+                }
+            }
+            
+            if (!alreadyExpanded) {
+                CheckersData newState = copyBoard(node.state);
+                newState.makeMove(move);
+                MCNode<CheckersData> newNode = new MCNode<>(newState, node, move);
+                node.children.add(newNode);
+                return newNode;
+            }
+        }
+        
+        return node;
+    }
+    
+    private double simulation(CheckersData state) {
+        CheckersData simState = copyBoard(state);
+        int currentPlayer = CheckersData.RED;
+        int moveCount = 0;
+        int maxMoves = 200; // Prevent infinite games
+        
+        while (moveCount < maxMoves) {
+            CheckersMove[] moves = simState.getLegalMoves(currentPlayer);
+            
+            if (moves == null) {
+                // Current player has no moves
+                if (currentPlayer == CheckersData.BLACK) {
+                    return 0.0; // Agent loses
+                } else {
+                    return 1.0; // Agent wins
+                }
+            }
+            
+            // Random move
+            CheckersMove randomMove = moves[new java.util.Random().nextInt(moves.length)];
+            simState.makeMove(randomMove);
+            
+            // Switch player
+            currentPlayer = (currentPlayer == CheckersData.RED) ? CheckersData.BLACK : CheckersData.RED;
+            moveCount++;
+        }
+        
+        // Draw
+        return 0.5;
+    }
+    
+    private void backPropagation(MCNode<CheckersData> node, double result) {
+        while (node != null) {
+            node.visits++;
+            node.wins += result;
+            node = node.parent;
+            // Flip result for opponent
+            result = 1.0 - result;
+        }
+    }
+    
+    private CheckersData copyBoard(CheckersData board) {
+        CheckersData newBoard = new CheckersData();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                newBoard.board[i][j] = board.board[i][j];
+            }
+        }
+        return newBoard;
+    }
+    
+    private boolean movesEqual(CheckersMove m1, CheckersMove m2) {
+        if (m1 == null || m2 == null) return false;
+        if (m1.rows.size() != m2.rows.size()) return false;
+        for (int i = 0; i < m1.rows.size(); i++) {
+            if (!m1.rows.get(i).equals(m2.rows.get(i)) || 
+                !m1.cols.get(i).equals(m2.cols.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+}

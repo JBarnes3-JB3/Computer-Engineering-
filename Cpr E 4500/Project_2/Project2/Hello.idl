@@ -1,0 +1,33 @@
+module HelloApp {
+
+  struct Order {
+    string username;
+    long chickenQty;
+    long colaQty;
+    long totalPrice;
+  };
+
+  // MUST be BEFORE the interface
+  typedef sequence<Order> OrderList;
+
+  exception InvalidOrder {
+    string message;
+  };
+
+  exception OrderNotFound {
+    string message;
+  };
+
+  interface Hello {
+
+    string viewMenu();
+
+    string placeOrder(in string username, in long chickenQty, in long colaQty)
+      raises (InvalidOrder);
+
+    Order checkOrderStatus(in string username)
+      raises (OrderNotFound);
+
+    OrderList viewAllOrders();   // uses typedef
+  };
+};
